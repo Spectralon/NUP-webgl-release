@@ -3,16 +3,22 @@
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <!-- Yandex Games SDK -->
-    <script src="https://yandex.ru/games/sdk/v2"></script>
     <!-- VK Games SDK -->
     <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
     <!-- Yandex.RTB -->
-    <script>window.yaContextCb=window.yaContextCb||[]</script>
-	  <script src="https://yandex.ru/ads/system/context.js" async></script>
+    <script>
+      window.yaContextCb = window.yaContextCb || [];
+    </script>
+    <script src="https://yandex.ru/ads/system/context.js" async></script>
     <style type="text/css">
       #unity-container {
-        font-family: "BlinkMacSystemFont",'Roboto','Helvetica Neue','Geneva',"Noto Sans Armenian","Noto Sans Bengali","Noto Sans Cherokee","Noto Sans Devanagari","Noto Sans Ethiopic","Noto Sans Georgian","Noto Sans Hebrew","Noto Sans Kannada","Noto Sans Khmer","Noto Sans Lao","Noto Sans Osmanya","Noto Sans Tamil","Noto Sans Telugu","Noto Sans Thai",arial,Tahoma,verdana,sans-serif;
+        font-family: "BlinkMacSystemFont", "Roboto", "Helvetica Neue", "Geneva",
+          "Noto Sans Armenian", "Noto Sans Bengali", "Noto Sans Cherokee",
+          "Noto Sans Devanagari", "Noto Sans Ethiopic", "Noto Sans Georgian",
+          "Noto Sans Hebrew", "Noto Sans Kannada", "Noto Sans Khmer",
+          "Noto Sans Lao", "Noto Sans Osmanya", "Noto Sans Tamil",
+          "Noto Sans Telugu", "Noto Sans Thai", arial, Tahoma, verdana,
+          sans-serif;
         background: #828080;
       }
       #unity-container[loaded] {
@@ -29,10 +35,10 @@
         transition: OPACITY 1s ease 2.3s;
       }
       #loading-placeholder-text {
-        OPACITY: 0;
+        opacity: 0;
       }
       #loading-placeholder-text[toolong] {
-        OPACITY: 1;
+        opacity: 1;
       }
     </style>
     <title>NumberUP</title>
@@ -63,17 +69,41 @@
           height: 100%;
           left: 0%;
           top: 0%;
-        display: flex;
+          display: flex;
           z-index: 1;
-        justify-content: center;
+          justify-content: center;
           align-items: center;
           font-size: xxx-large;
           user-select: none;
           flex-direction: column;
-      "
-    >
+        "
+      >
         <div id="loading-placeholder-text">0%</div>
-        <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128"><circle cx="60" cy="60" r="40" stroke="#bbada0" fill="none" stroke-width="20" stroke-linecap="butt"><animate attributeName="stroke-dashoffset" dur="2.2s" repeatCount="indefinite" from="0" to="500"></animate><animate attributeName="stroke-dasharray" dur="2.2s" repeatCount="indefinite" values="150 100;1 250;150 100"></animate></circle></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128">
+          <circle
+            cx="60"
+            cy="60"
+            r="40"
+            stroke="#bbada0"
+            fill="none"
+            stroke-width="20"
+            stroke-linecap="butt"
+          >
+            <animate
+              attributeName="stroke-dashoffset"
+              dur="2.2s"
+              repeatCount="indefinite"
+              from="0"
+              to="500"
+            ></animate>
+            <animate
+              attributeName="stroke-dasharray"
+              dur="2.2s"
+              repeatCount="indefinite"
+              values="150 100;1 250;150 100"
+            ></animate>
+          </circle>
+        </svg>
       </div>
       <canvas
         id="unity-canvas"
@@ -84,85 +114,73 @@
           background: #828080;
         "
       ></canvas>
-	  <div
-	    style="
-			position: absolute;
-			width: 100%;
-			height: 4%;
-			top: 0%;
-			"
-	  >
-    <!-- Yandex.RTB R-A-2210769-1 -->
-    <div id="yandex_rtb_R-A-2210769-1"></div>
-    <script>window.yaContextCb.push(()=>{
-      Ya.Context.AdvManager.render({
-        renderTo: 'yandex_rtb_R-A-2210769-1',
-        blockId: 'R-A-2210769-1'
-      })
-    })</script>
-	  </div>
     </div>
     <script src="Build/NUP-webgl.loader.js"></script>
     <script>
-		  vkBridge.send('VKWebAppInit');
+      vkBridge.send("VKWebAppInit");
     </script>
     <script>
-      YaGames.init().then((ysdk) => {
-        console.log("Yandex SDK initialized");
-        window.ysdk = ysdk;
-      });
-    </script>
-    <script>
-            var container = document.querySelector("#unity-container");
-            var canvas = document.querySelector("#unity-canvas");
+      var container = document.querySelector("#unity-container");
+      var canvas = document.querySelector("#unity-canvas");
       var placeholder = document.querySelector("#loading-placeholder");
-            var placeholderText = document.querySelector("#loading-placeholder-text");
-            var loadingProgress = 0;
+      var placeholderText = document.querySelector("#loading-placeholder-text");
+      var loadingProgress = 0;
 
-            if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-              // Mobile device style: fill the whole browser client area with the game canvas:
-              var meta = document.createElement('meta');
-              meta.name = 'viewport';
-              meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-              document.getElementsByTagName('head')[0].appendChild(meta);
-            }
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        // Mobile device style: fill the whole browser client area with the game canvas:
+        var meta = document.createElement("meta");
+        meta.name = "viewport";
+        meta.content =
+          "width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes";
+        document.getElementsByTagName("head")[0].appendChild(meta);
+      }
 
-            window.onresize = () => canvas.style.aspectRatio = 0.3 + (0.75 - 0.3) * Math.min(1, window.innerWidth / window.innerHeight);
-            canvas.style.aspectRatio = 0.3 + (0.75 - 0.3) * Math.min(1, window.innerWidth / window.innerHeight);
+      window.onresize = () =>
+        (canvas.style.aspectRatio =
+          0.3 +
+          (0.75 - 0.3) * Math.min(1, window.innerWidth / window.innerHeight));
+      canvas.style.aspectRatio =
+        0.3 +
+        (0.75 - 0.3) * Math.min(1, window.innerWidth / window.innerHeight);
 
-            var gameInstance = null;
-            setTimeout(() => {
-              if(gameInstance != null) return;
-              document.querySelector("#loading-placeholder-text").attributes.setNamedItem(document.createAttribute("toolong"));
-            }, 2000);
-            createUnityInstance(document.querySelector("#unity-canvas"), {
-              dataUrl: "Build/NUP-webgl.data.unityweb",
-              frameworkUrl: "Build/NUP-webgl.framework.js.unityweb",
-              codeUrl: "Build/NUP-webgl.wasm.unityweb",
-              streamingAssetsUrl: "StreamingAssets",
-              companyName: "Mikhail Kaufmann",
-              productName: "NumberUP",
-              productVersion: "0.0.0.1",
-              // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
-              // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
-            }, 
-            (progress) => {
-              loadingProgress = progress + 0.1;
-              placeholderText.innerHTML = (loadingProgress * 100).toFixed(0) + '%';
-            }
-            ).then((unityInstance) => {
-              gameInstance = unityInstance;
-              window.onbeforeunload = () => {
-                gameInstance.SendMessage("Canvas", "WebGLCloseCallback");
-                return undefined;
-              };
+      var gameInstance = null;
+      setTimeout(() => {
+        if (gameInstance != null) return;
+        document
+          .querySelector("#loading-placeholder-text")
+          .attributes.setNamedItem(document.createAttribute("toolong"));
+      }, 2000);
+      createUnityInstance(
+        document.querySelector("#unity-canvas"),
+        {
+          dataUrl: "Build/NUP-webgl.data.unityweb",
+          frameworkUrl: "Build/NUP-webgl.framework.js.unityweb",
+          codeUrl: "Build/NUP-webgl.wasm.unityweb",
+          streamingAssetsUrl: "StreamingAssets",
+          companyName: "Mikhail Kaufmann",
+          productName: "NumberUP",
+          productVersion: "0.0.0.1",
+          // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
+          // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
+        },
+        (progress) => {
+          loadingProgress = progress + 0.1;
+          placeholderText.innerHTML = (loadingProgress * 100).toFixed(0) + "%";
+        }
+      )
+        .then((unityInstance) => {
+          gameInstance = unityInstance;
+          window.onbeforeunload = () => {
+            gameInstance.SendMessage("Canvas", "WebGLCloseCallback");
+            return undefined;
+          };
           placeholder.style.zIndex = 0;
           placeholderText.innerHTML = "";
           container.attributes.setNamedItem(document.createAttribute("loaded"));
-            })
-            .catch((message) => {
-              alert(message);
-            });
+        })
+        .catch((message) => {
+          alert(message);
+        });
     </script>
   </body>
 </html>
