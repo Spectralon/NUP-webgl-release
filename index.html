@@ -12,10 +12,27 @@
 	  <script src="https://yandex.ru/ads/system/context.js" async></script>
     <style type="text/css">
       #unity-container {
+        font-family: "BlinkMacSystemFont",'Roboto','Helvetica Neue','Geneva',"Noto Sans Armenian","Noto Sans Bengali","Noto Sans Cherokee","Noto Sans Devanagari","Noto Sans Ethiopic","Noto Sans Georgian","Noto Sans Hebrew","Noto Sans Kannada","Noto Sans Khmer","Noto Sans Lao","Noto Sans Osmanya","Noto Sans Tamil","Noto Sans Telugu","Noto Sans Thai",arial,Tahoma,verdana,sans-serif;
         background: #828080;
       }
       #unity-container[loaded] {
         background: #faf8ef;
+      }
+      #loading-placeholder {
+        font-weight: bold;
+        color: rgb(68, 62, 57);
+      }
+      #loading-placeholder-text {
+        -webkit-transition: OPACITY 1s ease 2.3s;
+        -moz-transition: OPACITY 1s ease 2.3s;
+        -o-transition: OPACITY 1s ease 2.3s;
+        transition: OPACITY 1s ease 2.3s;
+      }
+      #loading-placeholder-text {
+        OPACITY: 0;
+      }
+      #loading-placeholder-text[toolong] {
+        OPACITY: 1;
       }
     </style>
     <title>NumberUP</title>
@@ -52,8 +69,10 @@
           align-items: center;
           font-size: xxx-large;
           user-select: none;
+          flex-direction: column;
       "
     >
+        <div id="loading-placeholder-text">Первая загрузка занимает больше времени...</div>
         <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128"><circle cx="60" cy="60" r="40" stroke="#bbada0" fill="none" stroke-width="20" stroke-linecap="butt"><animate attributeName="stroke-dashoffset" dur="2.2s" repeatCount="indefinite" from="0" to="500"></animate><animate attributeName="stroke-dasharray" dur="2.2s" repeatCount="indefinite" values="150 100;1 250;150 100"></animate></circle></svg>
       </div>
       <canvas
@@ -110,7 +129,10 @@
             canvas.style.aspectRatio = 0.3 + (0.75 - 0.3) * Math.min(1, window.innerWidth / window.innerHeight);
 
             var gameInstance = null;
-
+            setTimeout(() => {
+              if(gameInstance != null) return;
+              document.querySelector("#loading-placeholder-text").attributes.setNamedItem(document.createAttribute("toolong"));
+            }, 2000);
             createUnityInstance(document.querySelector("#unity-canvas"), {
               dataUrl: "Build/NUP-webgl.data.unityweb",
               frameworkUrl: "Build/NUP-webgl.framework.js.unityweb",
@@ -128,6 +150,7 @@
                 return undefined;
               };
           placeholder.style.zIndex = 0;
+          document.querySelector("#loading-placeholder-text").innerHTML = "";
           container.attributes.setNamedItem(document.createAttribute("loaded"));
             })
             .catch((message) => {
