@@ -117,6 +117,7 @@
             var canvas = document.querySelector("#unity-canvas");
       var placeholder = document.querySelector("#loading-placeholder");
             var placeholderText = document.querySelector("#loading-placeholder-text");
+            var loadingProgress = 0;
 
             if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
               // Mobile device style: fill the whole browser client area with the game canvas:
@@ -146,7 +147,8 @@
               // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
             }, 
             (progress) => {
-              placeholderText.innerHTML = (progress * 100).toFixed(0) + '%';
+              loadingProgress = progress + 0.1;
+              placeholderText.innerHTML = (loadingProgress * 100).toFixed(0) + '%';
             }
             ).then((unityInstance) => {
               gameInstance = unityInstance;
