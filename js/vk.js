@@ -33,5 +33,24 @@ const unityWrapper = {
     },
     AchievmentGet: function (name, description) {
         console.log(`${name}: ${description}`);
+        achievementName.innerHTML = name;
+        achievementDescr.innerHTML = description;
+        achievements.removeAttribute("hidden");
+    },
+    ShareAchievement: function () {
+        if (!bridge.active()) return;
+
+        bridge
+            .send('VKWebAppShowWallPostBox', {
+                message: `Я получил достижение "${achievementName.innerHTML}" в игре [https://vk.com/app${bridge.data.api_id}|NumberUP]! А вам слабо?`,
+                attachment: `https://vk.com/app${bridge.data.api_id}`,
+                owner_id: bridge.data.viewer_id
+            })
+            .then((data) => {
+                console.log(`Идентификатор записи: ${data.post_id}`);
+            })
+            .catch((e) => {
+                console.log("Ошибка!", e);
+            })
     }
 }

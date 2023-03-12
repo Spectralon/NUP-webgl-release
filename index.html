@@ -52,6 +52,7 @@
         justify-content: center;
         align-items: center;
         font-size: xxx-large;
+        font-size: -webkit-xxx-large;
         -webkit-user-select: none;
         user-select: none;
         flex-direction: column;
@@ -69,6 +70,103 @@
       }
       #loading-placeholder-text[toolong] {
         opacity: 1;
+      }
+      #achievement-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        -webkit-user-select: none;
+        user-select: none;
+        height: 100%;
+        z-index: 1;
+        opacity: 1;
+        -webkit-transition: OPACITY 1s;
+        -moz-transition: OPACITY 1s;
+        -o-transition: OPACITY 1s;
+        transition: OPACITY 1s;
+      }
+      #achievement-container[hidden] {
+        z-index: -1;
+        opacity: 0;
+      }
+      #achievement-container-window {
+        background: rgba(187, 173, 160, 0.8);
+        width: 100%;
+        height: 100%;
+        font-weight: 800;
+        color: #443e39;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border-radius: 15px;
+      }
+      #achievement-descr {
+        font-size: x-large;
+        font-weight: 700;
+        text-shadow: -2px -2px 0 #faf8ef, 2px -2px 0 #faf8ef, -2px 2px 0 #faf8ef,
+          2px 2px 0 #faf8ef;
+        color: #797067;
+        margin-bottom: 10px;
+        margin-top: 10px;
+      }
+      #achievement-name {
+        font-weight: inherit;
+        text-shadow: -2px -2px 0 #faf8ef, 2px -2px 0 #faf8ef, -2px 2px 0 #faf8ef,
+          2px 2px 0 #faf8ef;
+        font-size: larger;
+        color: #797067;
+        text-decoration: underline;
+        margin-bottom: 10px;
+        margin-top: 10px;
+      }
+      .header-text {
+        font-size: xxx-large;
+        font-size: -webkit-xxx-large;
+        text-shadow: -2px -2px 0 #faf8ef, 2px -2px 0 #faf8ef, -2px 2px 0 #faf8ef,
+          2px 2px 0 #faf8ef;
+      }
+      .subheader-text {
+        font-size: xx-large;
+      }
+      button {
+        font-size: 2vw;
+        background-color: #82aab8;
+        color: #faf8ef;
+        border-color: #faf8ef;
+        border-width: 5px;
+        border-style: solid;
+        border-radius: 15px;
+        padding: 15px 1px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        margin: 4px 2px;
+        cursor: pointer;
+        transition-property: background-color, color, border-color;
+        transition-duration: 0.05s;
+        transition-timing-function: linear;
+        width: 50%;
+      }
+      button:active {
+        background-color: #5d7a84;
+        color: #c6c5be;
+        border-color: #c6c5be;
+      }
+      button.negative {
+        background-color: #b9848b;
+      }
+      button.negative:active {
+        background-color: #855f64;
+      }
+      #achievement-info {
+        padding: 10px 10px 10px 10px;
+        border-style: dotted;
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+        margin-top: 10px;
+        border-radius: inherit;
       }
     </style>
     <title>NumberUP</title>
@@ -104,14 +202,31 @@
         </svg>
       </div>
       <canvas id="unity-canvas"></canvas>
+      <div id="achievement-container" hidden>
+        <div id="achievement-container-window">
+          <div class="header-text">Новое достижение!</div>
+          <div id="achievement-info" class="subheader-text">
+            <b id="achievement-name">Test</b>
+            <hr style="width: 100%; border-style: solid" />
+            <b id="achievement-descr">Lorem ipsum lalala</b>
+          </div>
+          <button id="achievement-share">Поделиться</button>
+          <button id="achievement-close" class="negative">Закрыть</button>
+        </div>
+      </div>
     </div>
     <script src="Build/NUP-webgl.loader.js"></script>
     <script src="js/vk.js"></script>
     <script>
       var container = document.querySelector("#unity-container");
+      var achievements = document.querySelector("#achievement-container");
       var canvas = document.querySelector("#unity-canvas");
       var placeholder = document.querySelector("#loading-placeholder");
       var placeholderText = document.querySelector("#loading-placeholder-text");
+      var buttonShare = document.querySelector("#achievement-share");
+      var buttonClose = document.querySelector("#achievement-close");
+      var achievementName = document.querySelector("#achievement-name");
+      var achievementDescr = document.querySelector("#achievement-descr");
       var loadingProgress = 0;
 
       if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
@@ -123,13 +238,23 @@
         document.getElementsByTagName("head")[0].appendChild(meta);
       }
 
-      window.onresize = () =>
-        (canvas.style.aspectRatio =
+      window.onresize = handleResize;
+
+      function handleResize() {
+        canvas.style.aspectRatio =
           0.3 +
-          (0.75 - 0.3) * Math.min(1, window.innerWidth / window.innerHeight));
-      canvas.style.aspectRatio =
-        0.3 +
-        (0.75 - 0.3) * Math.min(1, window.innerWidth / window.innerHeight);
+          (0.75 - 0.3) * Math.min(1, window.innerWidth / window.innerHeight);
+        achievements.style.width = `${canvas.width}px`;
+      }
+      handleResize();
+
+      buttonShare.onclick = () => {
+        unityWrapper.ShareAchievement();
+      }
+
+      buttonClose.onclick = () => {
+        achievements.attributes.setNamedItem(document.createAttribute("hidden"));
+      }
 
       var gameInstance = null;
       setTimeout(() => {
@@ -165,6 +290,8 @@
           placeholder.style.zIndex = 0;
           placeholderText.innerHTML = "";
           container.attributes.setNamedItem(document.createAttribute("loaded"));
+
+          setTimeout(handleResize, 500);
         })
         .catch((message) => {
           alert(message);
