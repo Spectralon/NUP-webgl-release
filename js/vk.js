@@ -16,7 +16,7 @@ bridge.active = () => bridge.data != null;
 
 const unityWrapper = {
     ShareProgress: function (value) {
-        if(!bridge.active()) return;
+        if (!bridge.active()) return;
 
         bridge
             .send('VKWebAppShowWallPostBox', {
@@ -30,5 +30,8 @@ const unityWrapper = {
             .catch((e) => {
                 console.log("Ошибка!", e);
             })
+    },
+    AchievmentGet: function (name, description) {
+        console.log(`${name}: ${description}`);
     }
 }
